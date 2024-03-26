@@ -21,13 +21,78 @@ class GrasshopperTest extends TestCase
         $this->game->restart();
     }
 
-    // Test one: Jumps in straight line over other bugs
-    public function testJumpStraightOverOneBug() {
-        // act
+    public function prepareOneJump() {
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+    }
+
+    // Test one: Jumps in straight line over other bugs
+    public function testJumpStraightOverOneBugNonePos() {
+        // act
+        $this->prepareOneJump();
+        $this->game->placeStone("B", '0,-1');
+        $this->game->moveStone('-1,2', '-1,1');
+        $this->game->moveStone('-1,0', '-1,2');
+
+        // assert
+        self::assertArrayHasKey('-1,2', $this->game->getBoard());
+    }
+
+    public function testJumpStraightOverOneBugNoneNeg() {
+        // act
+        $this->prepareOneJump();
+        $this->game->placeStone("B", '0,-1');
+        $this->game->placeStone("B", '0,2');
+        $this->game->placeStone("B", '-1,-1');
+        $this->game->moveStone('-1,2', '-1,1');
+        $this->game->moveStone('-1,0', '-1,-2');
+
+        // assert
+        self::assertArrayHasKey('-1,-2', $this->game->getBoard());
+    }
+
+    public function testJumpStraightOverOneBugPosNone() {
+        // act
+        $this->prepareOneJump();
+        $this->game->moveStone('-1,0', '1,0');
+
+        // assert
+        self::assertArrayHasKey('1,0', $this->game->getBoard());
+    }
+
+    public function testJumpStraightOverOneBugNegNone() {
+        // act
+        $this->prepareOneJump();
+        $this->game->placeStone("B", '0,-1');
+        $this->game->placeStone("B", '0,2');
+        $this->game->placeStone("B", '0,-1');
+        $this->game->moveStone('-1,2', '-1,1');
+        $this->game->placeStone("A", '-1,-1');
+        $this->game->moveStone('0,2', '-1,2');
+        $this->game->placeStone("A", '-2,0');
+        $this->game->moveStone('-1,2', '0,2');
+        $this->game->moveStone('-1,0', '-3,0');
+
+        // assert
+        self::assertArrayHasKey('-3,0', $this->game->getBoard());
+    }
+
+    public function testJumpStraightOverOneBugNegPos() {
+        // act
+        $this->prepareOneJump();
+        $this->game->placeStone("B", '-2,1');
+        $this->game->moveStone('-1,2', '-1,1');
+        $this->game->moveStone('-1,0', '-3,2');
+
+        // assert
+        self::assertArrayHasKey('-3,2', $this->game->getBoard());
+    }
+
+    public function testJumpStraightOverOneBugPosNeg() {
+        // act
+        $this->prepareOneJump();
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
         $this->game->moveStone('-1,0', '1,-2');
@@ -93,7 +158,7 @@ class GrasshopperTest extends TestCase
         $this->game->moveStone('-1,0', '-1,-1');
 
         // assert
-        self::assertSame('Grasshopper must jump more than one tile', $_SESSION['error']);
+        self::assertSame('Grasshopper cannot jump that', $_SESSION['error']);
     }
 
     // Test four: Can't jump onto an occupied tile
@@ -127,7 +192,7 @@ class GrasshopperTest extends TestCase
         $this->game->moveStone('-1,0', '2,-3');
 
         // assert
-        self::assertSame('Grasshopper cannot jump over empty tiles', $_SESSION['error']);
+        self::assertSame('Grasshopper cannot jump that', $_SESSION['error']);
     }
 
 }

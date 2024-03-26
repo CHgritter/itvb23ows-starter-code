@@ -91,6 +91,7 @@ class Game
         return false;
     }
 
+    // TODO: Reduce complexity.
     public function isValidMove($from, $to): bool
     {
         $player = $this->getPlayer();
@@ -121,7 +122,11 @@ class Game
             }
             elseif (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($from, $to, $board)) {
                 $_SESSION['error'] = 'Tile must slide';
-            } else {
+            }
+            elseif ($tile[1] == "G" && !$this->grasshopperJump($from, $to, $board)) {
+                $_SESSION['error'] = 'Grasshopper cannot jump that';
+            }
+            else {
                 return true;
             }
         }
@@ -178,5 +183,63 @@ class Game
         }
         return min($this->util->len($board[$common[0]] ?? 0), $this->util->len($board[$common[1]] ?? 0))
             <= max($this->util->len($board[$from] ?? 0), $this->util->len($board[$to] ?? 0));
+    }
+
+    // TODO: Reduce returns.
+    public function grasshopperJump($from, $to, $board): bool
+    {
+        if ($this->util->isNeighbour($from, $to)) {
+            return false;
+        }
+        $fromCoords = explode(',', $from);
+        $toCoords = explode(',', $to);
+        if (($fromCoords[0] != $toCoords[0]) &&
+            ($fromCoords[1] != $toCoords[1]) &&
+            (abs($fromCoords[0] - $toCoords[0]) != abs($fromCoords[1] - $toCoords[1]))) {
+            return false;
+        }
+        $tilesInPath = $this->getTilesBetween($fromCoords, $toCoords);
+        foreach ($tilesInPath as $tile) {
+            if (!isset($board[$tile])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // TODO: Reduce complexity.
+    public function getTilesBetween($fromCoords, $toCoords): array
+    {
+        $tilesInPath = [];
+        if ($fromCoords[0] == $toCoords[0]) {
+            for (
+                $secondValue = min($fromCoords[1], $toCoords[1]) + 1;
+                $secondValue < max($fromCoords[1], $toCoords[1]);
+                $secondValue++
+            ) {
+                $tilesInPath[] = $toCoords[0].",".$secondValue;
+            }
+        } elseif ($fromCoords[1] == $toCoords[1]){
+            for (
+                $firstValue = min($fromCoords[0], $toCoords[0]) + 1;
+                $firstValue < max($fromCoords[0], $toCoords[0]);
+                $firstValue++
+            ) {
+                $tilesInPath[] = $firstValue.",".$fromCoords[1];
+            }
+        } else {
+            if ($fromCoords[0] > $toCoords[0]) {
+                $distance = abs($fromCoords[0] - $toCoords[0]);
+                for ($x = 1; $x < $distance; $x++) {
+                    $tilesInPath[] = ($fromCoords[0]-$x).",".($fromCoords[1]+$x);
+                }
+            } else {
+                $distance = abs($fromCoords[0] - $toCoords[0]);
+                for ($x = 1; $x < $distance; $x++) {
+                    $tilesInPath[] = ($fromCoords[0]+$x).",".($fromCoords[1]-$x);
+                }
+            }
+        }
+        return $tilesInPath;
     }
 }

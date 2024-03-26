@@ -77,7 +77,6 @@ class UtilValidationTest extends TestCase
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
-        $hand = $this->game->getHand();
         $player = $this->game->getPlayer();
 
         // assert
