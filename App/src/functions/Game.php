@@ -7,9 +7,11 @@ use functions\Util as Util;
 class Game
 {
     private Database $db;
+    private Util $util;
 
     public function __construct(Database $db) {
         $this->db = $db;
+        $this->util = new Util();
     }
 
     public function restart() {
@@ -38,7 +40,6 @@ class Game
     }
 
     public function getSplitHive(): bool {
-        $util = new Util();
 
         $board = $this->getBoard();
 
@@ -47,7 +48,7 @@ class Game
 
         while ($queue) {
             $next = explode(',', array_shift($queue));
-            foreach ($util->offsets as $pq) {
+            foreach ($this->util->offsets as $pq) {
                 list($p, $q) = $pq;
                 $p += $next[0];
                 $q += $next[1];
@@ -68,7 +69,6 @@ class Game
         $player = $this->getPlayer();
         $board = $this->getBoard();
         $hand = $this->getHand();
-        $util = new Util();
         unset($_SESSION['error']);
         if (!$hand[$piece]) {
             $_SESSION['error'] = "Player does not have tile";
@@ -76,10 +76,10 @@ class Game
         elseif (isset($board[$to])) {
             $_SESSION['error'] = 'Board position is not empty';
         }
-        elseif (count($board) && !$util->hasNeighBour($to, $board)) {
+        elseif (count($board) && !$this->util->hasNeighbour($to, $board)) {
             $_SESSION['error'] = "board position has no neighbour";
         }
-        elseif (array_sum($hand) < 11 && !$util->neighboursAreSameColor($player, $to, $board)) {
+        elseif (array_sum($hand) < 11 && !$this->util->neighboursAreSameColor($player, $to, $board)) {
             $_SESSION['error'] = "Board position has opposing neighbour";
         }
         elseif (array_sum($hand) <= 8 && $hand['Q'] && $hand['Q'] !=$hand[$piece]) {
@@ -96,7 +96,6 @@ class Game
         $player = $this->getPlayer();
         $board = $this->getBoard();
         $hand = $this->getHand();
-        $util = new Util();
         unset($_SESSION['error']);
 
         if (!isset($board[$from])) {
@@ -114,13 +113,13 @@ class Game
         else {
             $tile = array_pop($board[$from]);
             unset($board[$from]);
-            if (!$util->hasNeighBour($to, $board) || $this->getSplitHive()) {
+            if (!$this->util->hasNeighbour($to, $board) || $this->getSplitHive()) {
                 $_SESSION['error'] = "Move would split hive";
             }
             elseif (isset($board[$to]) && $tile[1] != "B") {
                 $_SESSION['error'] = 'Tile not empty';
             }
-            elseif (($tile[1] == "Q" || $tile[1] == "B") && !self::slide($from, $to)) {
+            elseif (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($from, $to, $board)) {
                 $_SESSION['error'] = 'Tile must slide';
             } else {
                 return true;
@@ -154,31 +153,30 @@ class Game
         $_SESSION['board'] = $board;
     }
 
-    public function slide($from, $to): bool
+    public function slide($from, $to, $board): bool
     {
-        $board = $this->getBoard();
-        unset($board[$from]);
-        $util = new Util;
-        if (!$util->hasNeighBour($to, $board)
-            || !$util->isNeighbour($from, $to)) {
+        if (!$this->util->hasNeighbour($to, $board)
+            || !$this->util->isNeighbour($from, $to)) {
             return false;
         }
         $b = explode(',', $to);
         $common = [];
-        foreach ($util->offsets as $pq) {
+        foreach ($this->util->offsets as $pq) {
             $p = $b[0] + $pq[0];
             $q = $b[1] + $pq[1];
-            if ($util->isNeighbour($from, $p.",".$q)) {
+            if ($this->util->isNeighbour($from, $p.",".$q)) {
                 $common[] = $p.",".$q;
             }
         }
-        if ((!isset($board[$common[0]]) || !$board[$common[0]])
-            && (!isset($board[$common[1]]) || !$board[$common[1]])
-            && (!isset($board[$from]) || !$board[$from])
-            && (!isset($board[$to]) || !$board[$to])) {
+        if (
+            (!isset($board[$common[0]]) || !$board[$common[0]]) &&
+            (!isset($board[$common[1]]) || !$board[$common[1]]) &&
+            (!isset($board[$from]) || !$board[$from]) &&
+            (!isset($board[$to]) || !$board[$to])
+        ) {
                 return false;
-            }
-            return min($util->len($board[$common[0]] ?? 0), $util->len($board[$common[1]]?? 0))
-            <= max($util->len($board[$from] ?? 0), $util->len($board[$to] ?? 0));
+        }
+        return min($this->util->len($board[$common[0]] ?? 0), $this->util->len($board[$common[1]] ?? 0))
+            <= max($this->util->len($board[$from] ?? 0), $this->util->len($board[$to] ?? 0));
     }
 }

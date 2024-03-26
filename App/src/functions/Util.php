@@ -7,19 +7,23 @@ class Util
 
     public function isNeighbour($a, $b): bool
     {
-        $a = explode(',', $a);
-        $b = explode(',', $b);
-        if (!($a[0] == $b[0] && $a[1] == $b[1]) && (
-            ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) ||
-            ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) ||
-            ($a[0] + $a[1] == $b[0] + $b[1]))
-        ) {
+        if ($a == $b) {
+            return false;
+        }
+        $aList = $this->getNeighbour($a);
+        $bList = $this->getNeighbour($b);
+//        if (!($a[0] == $b[0] && $a[1] == $b[1]) && (
+//            ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) ||
+//            ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) ||
+//            ($a[0] + $a[1] == $b[0] + $b[1]))
+//        ) {
+        if (in_array($b, $aList) && in_array($a, $bList)) {
             return true;
         }
         return false;
     }
 
-    public function hasNeighBour($a, $board): bool
+    public function hasNeighbour($a, $board): bool
     {
         foreach (array_keys($board) as $b) {
             if ($this->isNeighbour($a, $b)) {
@@ -27,6 +31,17 @@ class Util
             }
         }
         return false;
+    }
+
+    public function getNeighbour($tile): array {
+        $neighbours = [];
+        $surroundingTiles = explode(',', $tile);
+        foreach ($this->offsets as $pq) {
+            $p = $surroundingTiles[0] + $pq[0];
+            $q = $surroundingTiles[1] + $pq[1];
+            $neighbours[] = $p . "," . $q;
+        }
+        return $neighbours;
     }
 
     public function neighboursAreSameColor($player, $a, $board): bool
@@ -53,7 +68,7 @@ class Util
         if (
 
             (isset($board[$to])) ||
-            (count($board) && !$this->hasNeighBour($to, $board)) ||
+            (count($board) && !$this->hasNeighbour($to, $board)) ||
             (array_sum($hand) < 11 && !$this->neighboursAreSameColor($player, $to, $board))
         ) {
             return false;

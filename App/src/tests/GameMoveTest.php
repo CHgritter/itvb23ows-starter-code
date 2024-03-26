@@ -57,6 +57,46 @@ class GameMoveTest extends TestCase
         self::assertArrayHasKey('-1,0', $this->game->getBoard());
     }
 
+    public function testMoveNextToEnemy() {
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("B", '-1,0');
+        $this->game->placeStone("Q", '-1,2');
+        $this->game->moveStone('-1,0', '-1,1');
+
+        // assert
+        self::assertArrayHasKey('-1,1', $this->game->getBoard());
+    }
+
+    public function testMoveTooFarWithBeetle() {
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("B", '-1,0');
+        $this->game->placeStone("Q", '-1,2');
+        $this->game->placeStone("B", '1,-1');
+        $this->game->placeStone("B", '0,2');
+        $this->game->moveStone('-1,0', '1,-2');
+
+        // assert
+        self::assertArrayNotHasKey('1,-2', $this->game->getBoard());
+    }
+
+    public function testMoveBeetleOverAnotherBeetle() {
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("B", '-1,0');
+        $this->game->placeStone("Q", '-1,2');
+        $this->game->placeStone("B", '0,-1');
+        $this->game->placeStone("B", '0,2');
+        $this->game->moveStone('-1,0', '1,-2');
+
+        // assert
+        self::assertArrayNotHasKey('1,-2', $this->game->getBoard());
+    }
+
     public function testMovePositionEmpty() {
         // act
         $this->game->placeStone("Q", '0,0');
