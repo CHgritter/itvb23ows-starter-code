@@ -21,7 +21,7 @@ class GameMoveTest extends TestCase
         $this->game->restart();
     }
 
-    public function testMove1() {
+    public function testMoveOne() {
         // act
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
@@ -33,7 +33,7 @@ class GameMoveTest extends TestCase
         self::assertArrayHasKey('0,-1', $this->game->getBoard());
     }
 
-    public function testIssueTwoFixed() {
+    public function testMoveTwo() { //AKA, the check for issue 2
         // act
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("Q", '1,0');
@@ -41,6 +41,20 @@ class GameMoveTest extends TestCase
 
         // assert
         self::assertArrayHasKey('0,1', $this->game->getBoard());
+    }
+
+    public function testMoveThree() { //AKA, the check for issue 4
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("B", '-1,0');
+        $this->game->placeStone("Q", '-1,2');
+        $this->game->moveStone('-1,0', '0,-1');
+        $this->game->placeStone("B", '0,2');
+        $this->game->placeStone("B", '-1,0');
+
+        // assert
+        self::assertArrayHasKey('-1,0', $this->game->getBoard());
     }
 
     public function testMovePositionEmpty() {
