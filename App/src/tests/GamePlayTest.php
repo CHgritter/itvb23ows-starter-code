@@ -105,7 +105,7 @@ class GamePlayTest extends TestCase
         self::assertSame('Must play queen bee', $_SESSION['error']);
     }
 
-    public function testPlayMustPlayQueenAndDoesSo() {
+    public function testPlayMustPlayQueenAndDoesSo() { //AKA, the check for issue 3
         // act
         $this->game->placeStone("A", '0,0');
         $this->game->placeStone("B", '0,1');
