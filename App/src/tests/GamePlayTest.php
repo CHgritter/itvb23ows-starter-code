@@ -104,4 +104,18 @@ class GamePlayTest extends TestCase
         // assert
         self::assertSame('Must play queen bee', $_SESSION['error']);
     }
+
+    public function testPlayMustPlayQueenAndDoesSo() {
+        // act
+        $this->game->placeStone("A", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("B", '-1,0');
+        $this->game->placeStone("A", '-1,2');
+        $this->game->placeStone("B", '0,-1');
+        $this->game->placeStone("B", '1,1');
+        $this->game->placeStone("Q", '-1,-1');
+
+        // assert
+        self::assertArrayHasKey('-1,-1', $this->game->getBoard());
+    }
 }

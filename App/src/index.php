@@ -148,14 +148,18 @@
             <select name="piece">
                 <?php
                     foreach ($hand[$player] as $tile => $ct) {
-                        echo "<option value=\"$tile\">$tile</option>";
+                        if ($ct > 0) {
+                            echo "<option value=\"$tile\">$tile</option>";
+                        }
                     }
                 ?>
             </select>
             <select name="to">
                 <?php
                     foreach ($to as $pos) {
-                        echo "<option value=\"$pos\">$pos</option>";
+                        if ($util->validatePlayPosition($board, $pos, $hand[$player], $player)) {
+                            echo "<option value=\"$pos\">$pos</option>";
+                        }
                     }
                 ?>
             </select>
@@ -165,7 +169,9 @@
             <select name="from">
                 <?php
                     foreach (array_keys($board) as $pos) {
-                        echo "<option value=\"$pos\">$pos</option>";
+                        if ($util->playerOwnsTile($board, $pos, $player)) {
+                            echo "<option value=\"$pos\">$pos</option>";
+                        }
                     }
                 ?>
             </select>
@@ -176,7 +182,14 @@
                     }
                 ?>
             </select>
-            <input type="submit" value="Move">
+            <?php
+                if($hand[$player]['Q']) {
+                    echo "Must place down Queen before moves can be made.";
+                }
+                else {
+                    echo "<input type=\"submit\" value=\"Move\">";
+                }
+            ?>
         </form>
         <form method="post" action="pass.php">
             <input type="submit" value="Pass">

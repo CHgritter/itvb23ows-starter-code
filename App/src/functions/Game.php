@@ -82,7 +82,7 @@ class Game
         elseif (array_sum($hand) < 11 && !$util->neighboursAreSameColor($player, $to, $board)) {
             $_SESSION['error'] = "Board position has opposing neighbour";
         }
-        elseif (array_sum($hand) <= 8 && $hand['Q']) {
+        elseif (array_sum($hand) <= 8 && $hand['Q'] && $hand['Q'] !=$hand[$piece]) {
             $_SESSION['error'] = 'Must play queen bee';
         }
         else {

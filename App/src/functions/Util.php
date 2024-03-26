@@ -48,4 +48,24 @@ class Util
         return $tile ? count($tile) : 0;
     }
 
+    public function validatePlayPosition($board, $to, $hand, $player): bool
+    {
+        if (
+
+            (isset($board[$to])) ||
+            (count($board) && !$this->hasNeighBour($to, $board)) ||
+            (array_sum($hand) < 11 && !$this->neighboursAreSameColor($player, $to, $board))
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    public function playerOwnsTile($board, $from, $player): bool
+    {
+        if ($board[$from][count($board[$from])-1][0] == $player) {
+            return true;
+        }
+        return false;
+    }
 }
