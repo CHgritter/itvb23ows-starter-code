@@ -33,6 +33,16 @@ class GameMoveTest extends TestCase
         self::assertArrayHasKey('0,-1', $this->game->getBoard());
     }
 
+    public function testIssueTwoFixed() {
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("Q", '1,0');
+        $this->game->moveStone('0,0', '0,1');
+
+        // assert
+        self::assertArrayHasKey('0,1', $this->game->getBoard());
+    }
+
     public function testMovePositionEmpty() {
         // act
         $this->game->placeStone("Q", '0,0');
