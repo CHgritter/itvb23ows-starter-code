@@ -115,22 +115,41 @@ class Game
             $tile = array_pop($board[$from]);
             unset($board[$from]);
             if (!$this->util->hasNeighbour($to, $board) || $this->getSplitHive()) {
+                print " | ";
+                print !$this->util->hasNeighbour($to, $board);
+                print " | ";
+                print $this->getSplitHive();
+                print " | ";
                 $_SESSION['error'] = "Move would split hive";
             }
             elseif (isset($board[$to]) && $tile[1] != "B") {
                 $_SESSION['error'] = 'Tile not empty';
             }
-            elseif (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($from, $to, $board)) {
-                $_SESSION['error'] = 'Tile must slide';
-            }
-            elseif ($tile[1] == "G" && !$this->grasshopperJump($from, $to, $board)) {
-                $_SESSION['error'] = 'Grasshopper cannot jump that';
-            }
-            else {
+            elseif (!$this->tilePicker($tile, $from, $to, $board)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public function tilePicker($tile, $from, $to, $board): bool
+    {
+        if (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($from, $to, $board)) {
+            $_SESSION['error'] = 'Tile must slide';
+        }
+        elseif ($tile[1] == "G" && !$this->grasshopperJump($from, $to, $board)) {
+            $_SESSION['error'] = 'Grasshopper cannot jump that';
+        }
+        elseif ($tile[1] == "A" && !$this->antSlide($from, $to, $board, [])) {
+            $_SESSION['error'] = 'Ant must slide';
+        }
+        elseif ($tile[1] == "S") {
+            $_SESSION['error'] = 'Please add message';
+        }
+        else {
+            return false;
+        }
+        return true;
     }
 
     public function placeStone($piece, $to): void
@@ -241,5 +260,36 @@ class Game
             }
         }
         return $tilesInPath;
+    }
+
+    public function antSlide($from, $to, $board, $visitedTiles): bool
+    {
+        $tiles = array($from);
+        while (!empty($tiles)) {
+            $currentFrom = array_shift($tiles);
+            if (!in_array($currentFrom, $visitedTiles)) {
+                $visitedTiles[] = $currentFrom;
+            }
+
+            $b = explode(',', $currentFrom);
+            foreach ($this->util->offsets as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+
+                $neighbour = $p . "," . $q;
+                if (
+                    !in_array($neighbour, $visitedTiles) &&
+                    !isset($board[$neighbour]) &&
+                    $this->util->hasNeighbour($neighbour, $board) &&
+                    $this->slide($currentFrom, $neighbour, $board)
+                ) {
+                    if ($neighbour == $to) {
+                        return true;
+                    }
+                    $tiles[] = $neighbour;
+                }
+            }
+        }
+        return false;
     }
 }
