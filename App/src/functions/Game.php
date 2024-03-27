@@ -145,6 +145,31 @@ class Game
         return true;
     }
 
+    public function isAllowedToPass(): bool {
+        $hand = $this->getHand();
+        $board = $this->getBoard();
+        foreach ($hand as $ct) {
+            if ($ct > 0) {
+                $_SESSION['error'] = 'Hand still contains tiles to be played';
+                return false;
+            }
+        }
+        $player = $this->getPlayer();
+        $toPositions = $this->util->getAllToPositions($board);
+        foreach (array_keys($board) as $from) {
+            if ($this->util->playerOwnsTile($board, $from, $player)) {
+                foreach ($toPositions as $to) {
+                    if ($this->isValidMove($from, $to)) {
+                        $_SESSION['error'] = 'Valid moves still present';
+                        return false;
+                    }
+                }
+            }
+        }
+        unset($_SESSION['error']);
+        return true;
+    }
+
     public function placeStone($piece, $to): void
     {
         if ($this->isValidPosition($piece, $to)) {
@@ -168,6 +193,15 @@ class Game
             unset($board[$from]);
         }
         $_SESSION['board'] = $board;
+    }
+
+    public function passTurn(): void
+    {
+        if($this->isAllowedToPass()) {
+            $game_id = $this->getGameId();
+            $this->db->passTurn($game_id);
+            $_SESSION['player'] = 1 - $_SESSION['player'];
+        }
     }
 
     public function slide($from, $to, $board): bool
@@ -219,7 +253,7 @@ class Game
         return true;
     }
 
-    // TODO: Reduce complexity.
+    // TODO: Reduce complexity from 16 to 15
     public function getTilesBetween($fromCoords, $toCoords): array
     {
         $tilesInPath = [];
@@ -287,6 +321,7 @@ class Game
         return false;
     }
 
+    // TODO: Reduce complexity from 21 to 15
     public function spiderSlide($from, $to, $board): bool
     {
         $visitedTiles = [];
@@ -310,9 +345,6 @@ class Game
             if (!in_array($currentFrom, $visitedTiles)) {
                 $visitedTiles[] = $currentFrom;
             }
-            print "
-                the from value is: ";
-            print $currentFrom;
 
             $b = explode(',', $currentFrom);
             foreach ($this->util->offsets as $pq) {
@@ -320,18 +352,6 @@ class Game
                 $q = $b[1] + $pq[1];
 
                 $neighbour = $p . "," . $q;
-                print "
-                the value is: ";
-                print $neighbour;
-                print " Which has: ";
-                print !in_array($neighbour, $visitedTiles);
-                print " | ";
-                print !isset($board[$neighbour]);
-                print " | ";
-                print $this->util->hasNeighbour($neighbour, $board);
-                print " | ";
-                print $this->slide($currentFrom, $neighbour, $board);
-                print " ||| ";
                 if (
                     !in_array($neighbour, $visitedTiles) &&
                     !isset($board[$neighbour]) &&

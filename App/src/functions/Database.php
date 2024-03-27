@@ -27,12 +27,21 @@ class Database {
         $_SESSION['player'] = $c;
     }
 
-    public function placeMove($game_id, $type, $from, $to, ): int|string
+    public function placeMove($game_id, $type, $from, $to): int|string
     {
         $state = $this->getState();
         $stmt = $this->database->prepare('insert into moves (game_id, type, move_from, move_to, previous_id, state)
                                 values (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('isssis', $game_id, $type,$from, $to, $_SESSION['last_move'], $state);
+        $stmt->bind_param('isssis', $game_id, $type, $from, $to, $_SESSION['last_move'], $state);
+        $stmt->execute();
+        return $this->database->insert_id;
+    }
+
+    public function passTurn($game_id): int|string {
+        $state = $this->getState();
+        $stmt = $this->database->prepare('insert into moves (game_id, type, move_from, move_to, previous_id, state)
+                        values (?, "pass", null, null, ?, ?)');
+        $stmt->bind_param('iis', $game_id, $_SESSION['last_move'], $state);
         $stmt->execute();
         return $this->database->insert_id;
     }

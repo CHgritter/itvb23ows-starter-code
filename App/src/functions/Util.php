@@ -32,17 +32,17 @@ class Util
         }
         return false;
     }
-
-    public function getNeighbour($tile): array {
-        $neighbours = [];
-        $surroundingTiles = explode(',', $tile);
-        foreach ($this->offsets as $pq) {
-            $p = $surroundingTiles[0] + $pq[0];
-            $q = $surroundingTiles[1] + $pq[1];
-            $neighbours[] = $p . "," . $q;
-        }
-        return $neighbours;
-    }
+    //To be deleted.
+//    public function getNeighbour($tile): array {
+//        $neighbours = [];
+//        $surroundingTiles = explode(',', $tile);
+//        foreach ($this->offsets as $pq) {
+//            $p = $surroundingTiles[0] + $pq[0];
+//            $q = $surroundingTiles[1] + $pq[1];
+//            $neighbours[] = $p . "," . $q;
+//        }
+//        return $neighbours;
+//    }
 
     public function neighboursAreSameColor($player, $a, $board): bool
     {
@@ -56,6 +56,24 @@ class Util
             }
         }
         return true;
+    }
+
+    public function getAllToPositions($board): array
+    {
+        $to = [];
+        foreach ($this->offsets as $pq) {
+            foreach (array_keys($board) as $tile) {
+                $b = explode(',', $tile);
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+                $to[] = $p.','.$q;
+            }
+        }
+        $to = array_unique($to);
+        if (!count($to)) {
+            $to[] = '0,0';
+        }
+        return $to;
     }
 
     public function len($tile): int
