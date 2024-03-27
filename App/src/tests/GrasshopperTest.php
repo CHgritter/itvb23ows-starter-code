@@ -195,4 +195,21 @@ class GrasshopperTest extends TestCase
         self::assertSame('Grasshopper cannot jump that', $_SESSION['error']);
     }
 
+    // Extra tests
+    public function testCantCreateSplitHive() {
+        // act
+        $this->game->placeStone("Q", '0,0');
+        $this->game->placeStone("B", '0,1');
+        $this->game->placeStone("G", '-1,0');
+        $this->game->placeStone("Q", '-1,2');;
+        $this->game->placeStone("B", '-2,1');
+        $this->game->placeStone("B", '1,1');
+        $this->game->placeStone("B", '-1,-1');
+        $this->game->moveStone('1,1', '1,0');
+        $this->game->moveStone('-1,0', '2,0');
+
+        // assert
+        self::assertSame("Move would split hive", $_SESSION['error']);
+    }
+
 }

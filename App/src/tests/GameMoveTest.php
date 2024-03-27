@@ -168,7 +168,7 @@ class GameMoveTest extends TestCase
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
-        $this->game->placeStone("B", '1,1');
+        $this->game->moveStone('-1,2', '-1,1');
         $this->game->moveStone('0,0', '-1,0');
 
         // assert

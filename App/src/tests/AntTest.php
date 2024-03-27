@@ -70,7 +70,13 @@ class AntTest extends TestCase
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '-1,-1');
         $this->game->placeStone("A", '-2,3');
+        $this->game->placeStone("A", '-2,0');
+        $this->game->placeStone("A", '-1,3');
+        $this->game->placeStone("G", '0,-1');
+        $this->game->placeStone("G", '0,3');
         $this->game->moveStone('-1,0', '1,-1');
+        print $_SESSION['error'];
+
 
         // assert
         self::assertSame('Ant must slide', $_SESSION['error']);

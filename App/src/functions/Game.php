@@ -39,9 +39,7 @@ class Game
         return $_SESSION['game_id'];
     }
 
-    public function getSplitHive(): bool {
-
-        $board = $this->getBoard();
+    public function getSplitHive($board): bool {
 
         $all = array_keys($board);
         $queue = [array_shift($all)];
@@ -114,12 +112,7 @@ class Game
         else {
             $tile = array_pop($board[$from]);
             unset($board[$from]);
-            if (!$this->util->hasNeighbour($to, $board) || $this->getSplitHive()) {
-                print " | ";
-                print !$this->util->hasNeighbour($to, $board);
-                print " | ";
-                print $this->getSplitHive();
-                print " | ";
+            if (!$this->util->hasNeighbour($to, $board) || $this->getSplitHive($board)) {
                 $_SESSION['error'] = "Move would split hive";
             }
             elseif (isset($board[$to]) && $tile[1] != "B") {
@@ -140,11 +133,11 @@ class Game
         elseif ($tile[1] == "G" && !$this->grasshopperJump($from, $to, $board)) {
             $_SESSION['error'] = 'Grasshopper cannot jump that';
         }
-        elseif ($tile[1] == "A" && !$this->antSlide($from, $to, $board, [])) {
+        elseif ($tile[1] == "A" && !$this->antSlide($from, $to, $board)) {
             $_SESSION['error'] = 'Ant must slide';
         }
-        elseif ($tile[1] == "S") {
-            $_SESSION['error'] = 'Please add message';
+        elseif ($tile[1] == "S" && !$this->spiderSlide($from, $to, $board)) {
+            $_SESSION['error'] = 'Spider must slide';
         }
         else {
             return false;
@@ -262,8 +255,9 @@ class Game
         return $tilesInPath;
     }
 
-    public function antSlide($from, $to, $board, $visitedTiles): bool
+    public function antSlide($from, $to, $board): bool
     {
+        $visitedTiles = [];
         $tiles = array($from);
         while (!empty($tiles)) {
             $currentFrom = array_shift($tiles);
@@ -289,6 +283,69 @@ class Game
                     $tiles[] = $neighbour;
                 }
             }
+        }
+        return false;
+    }
+
+    public function spiderSlide($from, $to, $board): bool
+    {
+        $visitedTiles = [];
+        $tiles = array($from);
+        $tiles[] = null;
+        $totalSteps = 0;
+        $walkedOverTile = null;
+        while (!empty($tiles) && $totalSteps < 3) {
+            $currentFrom = array_shift($tiles);
+
+            if ($currentFrom == null) {
+                $totalSteps++;
+                $tiles[] = null;
+                if (reset($tiles) == null) {
+                    break;
+                } else {
+                    continue;
+                }
+            }
+
+            if (!in_array($currentFrom, $visitedTiles)) {
+                $visitedTiles[] = $currentFrom;
+            }
+            print "
+                the from value is: ";
+            print $currentFrom;
+
+            $b = explode(',', $currentFrom);
+            foreach ($this->util->offsets as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+
+                $neighbour = $p . "," . $q;
+                print "
+                the value is: ";
+                print $neighbour;
+                print " Which has: ";
+                print !in_array($neighbour, $visitedTiles);
+                print " | ";
+                print !isset($board[$neighbour]);
+                print " | ";
+                print $this->util->hasNeighbour($neighbour, $board);
+                print " | ";
+                print $this->slide($currentFrom, $neighbour, $board);
+                print " ||| ";
+                if (
+                    !in_array($neighbour, $visitedTiles) &&
+                    !isset($board[$neighbour]) &&
+                    $neighbour != $walkedOverTile &&
+                    $this->util->hasNeighbour($neighbour, $board) &&
+                    $this->slide($currentFrom, $neighbour, $board)
+                ) {
+                    if ($neighbour == $to && $totalSteps == 2) {
+                        return true;
+                    }
+                    $tiles[] = $neighbour;
+                }
+            }
+            $walkedOverTile = $currentFrom;
         }
         return false;
     }
