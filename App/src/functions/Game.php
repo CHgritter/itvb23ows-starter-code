@@ -266,9 +266,14 @@ class Game
     {
         $lastMove = $this->getLastMove();
         if ($this->canUndo($lastMove)) {
-            $game_id = $this->getGameId();
-            $result = $this->db->undoTurn($lastMove, $game_id);
-            $_SESSION['last_move'] = $result[5];
+            $lastMoveId = $this->db->getRecentMove($lastMove);
+            $result = $this->db->undoTurn($lastMoveId);
+            if ($result == null) {
+                $this->db->deleteTurn($lastMove);
+                $this->restart();
+                return;
+            }
+            $_SESSION['last_move'] = $result[0];
             $this->setState($result[6]);
             $_SESSION['player'] = 1 - $_SESSION['player'];
             $this->db->deleteTurn($lastMove);

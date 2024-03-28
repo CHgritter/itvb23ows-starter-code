@@ -32,7 +32,6 @@ class UndoTest extends TestCase
         $dbMock->allows('newGame')->andReturns(1);
         $game = new Game($dbMock);
         $game->restart();
-        // To set up a game in progress
         $_SESSION['board']['0,0'] = [[$_SESSION['player'], "Q"]];
         $_SESSION['hand'][$game->getPlayer()]["Q"]--;
         $_SESSION['player'] = 1 - $_SESSION['player'];
@@ -40,14 +39,16 @@ class UndoTest extends TestCase
         $_SESSION['hand'][$game->getPlayer()]["Q"]--;
         $_SESSION['player'] = 1 - $_SESSION['player'];
         $_SESSION['last_move'] = 2;
-        // finish arrange
         $gameState = serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
         $game_id = $game->getGameId();
         $dbMock->allows('placeMove')
             ->with($game_id, "play", "B", '-1,0', 2)
             ->andReturns(3);
+        $dbMock->allows('getRecentMove')
+            ->with(3)
+            ->andReturns(2);
         $dbMock->allows('undoTurn')
-            ->with(3, $game_id)
+            ->with(2)
             ->andReturns([5 => 2, 6 => $gameState]);
         $dbMock->allows('deleteTurn');
 
@@ -66,7 +67,6 @@ class UndoTest extends TestCase
         $dbMock->allows('newGame')->andReturns(1);
         $game = new Game($dbMock);
         $game->restart();
-        // To set up a game in progress
         $_SESSION['board']['0,0'] = [[$_SESSION['player'], "Q"]];
         $_SESSION['hand'][$game->getPlayer()]["Q"]--;
         $_SESSION['player'] = 1 - $_SESSION['player'];
@@ -80,14 +80,16 @@ class UndoTest extends TestCase
         $_SESSION['hand'][$game->getPlayer()]["B"]--;
         $_SESSION['player'] = 1 - $_SESSION['player'];
         $_SESSION['last_move'] = 4;
-        // finish arrange
         $gameState = serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
         $game_id = $game->getGameId();
         $dbMock->allows('placeMove')
             ->with($game_id, "move", '-1,0', '0,-1', 4)
             ->andReturns(5);
+        $dbMock->allows('getRecentMove')
+            ->with(5)
+            ->andReturns(4);
         $dbMock->allows('undoTurn')
-            ->with(5, $game_id)
+            ->with(4)
             ->andReturns([5 => 4, 6 => $gameState]);
         $dbMock->allows('deleteTurn');
 

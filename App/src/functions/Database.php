@@ -38,10 +38,18 @@ class Database {
         return $this->database->insert_id;
     }
 
-    public function undoTurn($lastMove, $game_id): false|array|null
+    public function getRecentMove($lastMove)
     {
-        $stmt = $this->database->prepare('SELECT * FROM moves WHERE game_id = ? AND id = ?');
-        $stmt->bind_param('ii', $game_id, $lastMove);
+        $stmt = $this->database->prepare('SELECT * FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $lastMove);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_array()[5];
+    }
+
+    public function undoTurn($lastMove): false|array|null
+    {
+        $stmt = $this->database->prepare('SELECT * FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $lastMove);
         $stmt->execute();
         return $stmt->get_result()->fetch_array();
     }
