@@ -30,5 +30,11 @@ services:
     volumes:
       - hive_db:/var/lib/mysql
 
+  ai:
+    build: AI
+    container_name: ai_game_container
+    ports:
+      - "7331:7331"
+
 volumes:
   hive_db:
