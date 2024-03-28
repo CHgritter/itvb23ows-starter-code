@@ -1,12 +1,14 @@
 <?php
     session_start();
 
+    use functions\Game as Game;
     use functions\Util as Util;
     use functions\Database as Database;
 
     require_once './vendor/autoload.php';
 
     $db = new Database();
+    $game = new Game($db);
     $util = new Util();
 
     //temporary
@@ -15,9 +17,10 @@
         header('Location: restart.php');
         exit(0);
     }
-    $board = $_SESSION['board'];
-    $player = $_SESSION['player'];
-    $hand = $_SESSION['hand'];
+    $board = $game->getBoard();
+    $player = $game->getPlayer();
+    $hand = $game->getHand();
+    $victory = $game->isGameFinished();
 
     $to = [];
     foreach ($util->offsets as $pq) {
@@ -120,7 +123,7 @@
         <div class="hand">
             White:
             <?php
-                foreach ($hand[0] as $tile => $ct) {
+                foreach ($_SESSION['hand'][0] as $tile => $ct) {
                     for ($i = 0; $i < $ct; $i++) {
                         echo '<div class="tile player0"><span>'.$tile."</span></div> ";
                     }
@@ -130,7 +133,7 @@
         <div class="hand">
             Black:
             <?php
-            foreach ($hand[1] as $tile => $ct) {
+            foreach ($_SESSION['hand'][1] as $tile => $ct) {
                 for ($i = 0; $i < $ct; $i++) {
                     echo '<div class="tile player1"><span>'.$tile."</span></div> ";
                 }
@@ -144,10 +147,16 @@
                 echo "Black";
             } ?>
         </div>
+        <?php if ($victory): ?>
+        <strong><?php
+                echo $_SESSION['endstate'];
+                unset($_SESSION['endstate']);
+                ?></strong>
+        <?php else: ?>
         <form method="post" action="play.php">
             <select name="piece">
                 <?php
-                    foreach ($hand[$player] as $tile => $ct) {
+                    foreach ($hand as $tile => $ct) {
                         if ($ct > 0) {
                             echo "<option value=\"$tile\">$tile</option>";
                         }
@@ -157,7 +166,7 @@
             <select name="to">
                 <?php
                     foreach ($to as $pos) {
-                        if ($util->validatePlayPosition($board, $pos, $hand[$player], $player)) {
+                        if ($util->validatePlayPosition($board, $pos, $hand, $player)) {
                             echo "<option value=\"$pos\">$pos</option>";
                         }
                     }
@@ -183,7 +192,7 @@
                 ?>
             </select>
             <?php
-                if($hand[$player]['Q']) {
+                if($hand['Q']) {
                     echo "Must place down Queen before moves can be made.";
                 }
                 else {
@@ -194,6 +203,7 @@
         <form method="post" action="pass.php">
             <input type="submit" value="Pass">
         </form>
+        <?php endif; ?>
         <form method="post" action="restart.php">
             <input type="submit" value="Restart">
         </form>

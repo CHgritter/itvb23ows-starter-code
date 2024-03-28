@@ -14,15 +14,6 @@ class Game
         $this->util = new Util();
     }
 
-    public function restart() {
-        $_SESSION['board'] = [];
-        $_SESSION['hand'] =
-            [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3],
-                1 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3]];
-        $_SESSION['player'] = 0;
-        $_SESSION['game_id'] = $this->db->newGame();
-    }
-
     public function getPlayer() {
         return $_SESSION['player'];
     }
@@ -37,6 +28,48 @@ class Game
 
     public function getGameId() {
         return $_SESSION['game_id'];
+    }
+
+    public function restart(): void
+    {
+        $_SESSION['board'] = [];
+        $_SESSION['hand'] =
+            [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3],
+                1 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3]];
+        $_SESSION['player'] = 0;
+        $_SESSION['endstate'] = null;
+        $_SESSION['game_id'] = $this->db->newGame();
+    }
+
+    public function isGameFinished(): bool
+    {
+        $whiteSurrounded = false;
+        $blackSurrounded = false;
+        $board = $this->getBoard();
+        foreach ($board as $position => $tile) {
+            $top = end($tile);
+            if ($top[1] == 'Q' && $top[0] == 0) {
+                $whiteSurrounded = $this->util->isQueenSurrounded($board, $position);
+            }
+            if ($top[1] == 'Q' && $top[0] == 1) {
+                $blackSurrounded = $this->util->isQueenSurrounded($board, $position);
+            }
+        }
+        if ($whiteSurrounded == true) {
+            if ($blackSurrounded == true) {
+                $_SESSION['endstate'] = "The game is a tie!";
+            }
+            else {
+                $_SESSION['endstate'] = "Black has won!";
+            }
+        }
+        elseif ($blackSurrounded == true) {
+            $_SESSION['endstate'] = "White has won!";
+        }
+        else {
+            return false;
+        }
+        return true;
     }
 
     public function getSplitHive($board): bool {

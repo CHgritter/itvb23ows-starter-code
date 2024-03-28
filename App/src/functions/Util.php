@@ -101,4 +101,23 @@ class Util
         }
         return false;
     }
+
+    public function isQueenSurrounded($board, $position): bool
+    {
+        $count = 0;
+        $b = explode(',', $position);
+        foreach ($this->offsets as $pq) {
+            $p = $b[0] + $pq[0];
+            $q = $b[1] + $pq[1];
+
+            $neighbour = $p . "," . $q;
+            if (isset($board[$neighbour])) {
+                $count++;
+            }
+        }
+        if ($count == 6) {
+            return true;
+        }
+        return false;
+    }
 }
