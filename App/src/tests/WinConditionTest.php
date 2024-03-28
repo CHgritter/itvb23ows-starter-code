@@ -50,7 +50,7 @@ class WinConditionTest extends TestCase
         $this->game->isGameFinished();
 
         // assert
-        self::assertSame("White has won!", $_SESSION['endstate']);
+        self::assertSame("White has won!", $_SESSION['end_state']);
     }
 
     // White Queen surrounded.
@@ -67,7 +67,7 @@ class WinConditionTest extends TestCase
         $this->game->isGameFinished();
 
         // assert
-        self::assertSame("Black has won!", $_SESSION['endstate']);
+        self::assertSame("Black has won!", $_SESSION['end_state']);
     }
 
 
@@ -79,7 +79,7 @@ class WinConditionTest extends TestCase
         $this->game->isGameFinished();
 
         // assert
-        self::assertSame(null, $_SESSION['endstate']);
+        self::assertSame(null, $_SESSION['end_state']);
     }
 
 
@@ -95,7 +95,7 @@ class WinConditionTest extends TestCase
         $this->game->isGameFinished();
 
         // assert
-        self::assertSame("The game is a tie!", $_SESSION['endstate']);
+        self::assertSame("The game is a tie!", $_SESSION['end_state']);
     }
 
 }

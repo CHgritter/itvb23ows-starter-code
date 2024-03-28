@@ -19,31 +19,38 @@ class Database {
         return serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
     }
 
-    public function setState($state): void
-    {
-        list($a, $b, $c) = unserialize($state);
-        $_SESSION['hand'] = $a;
-        $_SESSION['board'] = $b;
-        $_SESSION['player'] = $c;
-    }
-
-    public function placeMove($game_id, $type, $from, $to): int|string
+    public function placeMove($game_id, $type, $from, $to, $lastMove): int|string
     {
         $state = $this->getState();
         $stmt = $this->database->prepare('insert into moves (game_id, type, move_from, move_to, previous_id, state)
                                 values (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('isssis', $game_id, $type, $from, $to, $_SESSION['last_move'], $state);
+        $stmt->bind_param('isssis', $game_id, $type, $from, $to, $lastMove, $state);
         $stmt->execute();
         return $this->database->insert_id;
     }
 
-    public function passTurn($game_id): int|string {
+    public function passTurn($game_id, $lastMove): int|string {
         $state = $this->getState();
         $stmt = $this->database->prepare('insert into moves (game_id, type, move_from, move_to, previous_id, state)
                         values (?, "pass", null, null, ?, ?)');
-        $stmt->bind_param('iis', $game_id, $_SESSION['last_move'], $state);
+        $stmt->bind_param('iis', $game_id, $lastMove, $state);
         $stmt->execute();
         return $this->database->insert_id;
+    }
+
+    public function undoTurn($lastMove, $game_id): false|array|null
+    {
+        $stmt = $this->database->prepare('SELECT * FROM moves WHERE game_id = ? AND id = ?');
+        $stmt->bind_param('ii', $game_id, $lastMove);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_array();
+    }
+
+    public function deleteTurn($move): void
+    {
+        $stmt = $this->database->prepare('DELETE FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $move);
+        $stmt->execute();
     }
 
     public function newGame(): int

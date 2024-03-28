@@ -30,6 +30,10 @@ class Game
         return $_SESSION['game_id'];
     }
 
+    public function getLastMove() {
+        return $_SESSION['last_move'];
+    }
+
     public function restart(): void
     {
         $_SESSION['board'] = [];
@@ -37,8 +41,17 @@ class Game
             [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3],
                 1 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3]];
         $_SESSION['player'] = 0;
-        $_SESSION['endstate'] = null;
+        $_SESSION['end_state'] = null;
+        $_SESSION['last_move'] = null;
         $_SESSION['game_id'] = $this->db->newGame();
+    }
+
+    public function setState($state): void
+    {
+        list($a, $b, $c) = unserialize($state);
+        $_SESSION['hand'] = $a;
+        $_SESSION['board'] = $b;
+        $_SESSION['player'] = $c;
     }
 
     public function isGameFinished(): bool
@@ -57,14 +70,14 @@ class Game
         }
         if ($whiteSurrounded == true) {
             if ($blackSurrounded == true) {
-                $_SESSION['endstate'] = "The game is a tie!";
+                $_SESSION['end_state'] = "The game is a tie!";
             }
             else {
-                $_SESSION['endstate'] = "Black has won!";
+                $_SESSION['end_state'] = "Black has won!";
             }
         }
         elseif ($blackSurrounded == true) {
-            $_SESSION['endstate'] = "White has won!";
+            $_SESSION['end_state'] = "White has won!";
         }
         else {
             return false;
@@ -203,6 +216,15 @@ class Game
         return true;
     }
 
+    public function canUndo($lastMove): bool
+    {
+        if ($lastMove == null) {
+            $_SESSION['error'] = 'No moves to undo';
+            return false;
+        }
+        return true;
+    }
+
     public function placeStone($piece, $to): void
     {
         if ($this->isValidPosition($piece, $to)) {
@@ -210,7 +232,8 @@ class Game
             $_SESSION['hand'][$this->getPlayer()][$piece]--;
             $_SESSION['player'] = 1 - $_SESSION['player'];
             $game_id = $this->getGameId();
-            $_SESSION['last_move'] = $this->db->placeMove($game_id, "play", $piece, $to);
+            $lastMove = $this->getLastMove();
+            $_SESSION['last_move'] = $this->db->placeMove($game_id, "play", $piece, $to, $lastMove);
         }
     }
 
@@ -222,7 +245,8 @@ class Game
             $board[$to] = [$tile];
             $_SESSION['player'] = 1 - $_SESSION['player'];
             $game_id = $this->getGameId();
-            $_SESSION['last_move'] = $this->db->placeMove($game_id, "move", $from, $to);
+            $lastMove = $this->getLastMove();
+            $_SESSION['last_move'] = $this->db->placeMove($game_id, "move", $from, $to, $lastMove);
             unset($board[$from]);
         }
         $_SESSION['board'] = $board;
@@ -232,8 +256,22 @@ class Game
     {
         if($this->isAllowedToPass()) {
             $game_id = $this->getGameId();
-            $this->db->passTurn($game_id);
+            $lastMove = $this->getLastMove();
+            $_SESSION['last_move'] = $this->db->passTurn($game_id, $lastMove);
             $_SESSION['player'] = 1 - $_SESSION['player'];
+        }
+    }
+
+    public function undo(): void
+    {
+        $lastMove = $this->getLastMove();
+        if ($this->canUndo($lastMove)) {
+            $game_id = $this->getGameId();
+            $result = $this->db->undoTurn($lastMove, $game_id);
+            $_SESSION['last_move'] = $result[5];
+            $this->setState($result[6]);
+            $_SESSION['player'] = 1 - $_SESSION['player'];
+            $this->db->deleteTurn($lastMove);
         }
     }
 
