@@ -29,8 +29,8 @@ class UtilValidationTest extends TestCase
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
-        $hand = $this->game->getHand();
         $player = $this->game->getPlayer();
+        $hand = $this->game->getHand($player);
 
         // assert
         self::assertTrue($this->util->validatePlayPosition($board, '0,-1', $hand, $player));
@@ -41,8 +41,8 @@ class UtilValidationTest extends TestCase
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
-        $hand = $this->game->getHand();
         $player = $this->game->getPlayer();
+        $hand = $this->game->getHand($player);
 
         // assert
         self::assertFalse($this->util->validatePlayPosition($board, '0,0', $hand, $player));
@@ -53,8 +53,8 @@ class UtilValidationTest extends TestCase
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
-        $hand = $this->game->getHand();
         $player = $this->game->getPlayer();
+        $hand = $this->game->getHand($player);
 
         // assert
         self::assertFalse($this->util->validatePlayPosition($board, '0,-2', $hand, $player));
@@ -65,8 +65,8 @@ class UtilValidationTest extends TestCase
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
-        $hand = $this->game->getHand();
         $player = $this->game->getPlayer();
+        $hand = $this->game->getHand($player);
 
         // assert
         self::assertFalse($this->util->validatePlayPosition($board, '-1,1', $hand, $player));

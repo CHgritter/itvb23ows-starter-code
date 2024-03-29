@@ -19,7 +19,7 @@
     }
     $board = $game->getBoard();
     $player = $game->getPlayer();
-    $hand = $game->getHand();
+    $hand = $game->getHand($player);
     $victory = $game->isGameFinished();
 
     $to = [];
@@ -202,6 +202,9 @@
         </form>
         <form method="post" action="pass.php">
             <input type="submit" value="Pass">
+        </form>
+        <form method="post" action="callai.php">
+            <input type="submit" value="Call AI move">
         </form>
         <?php endif; ?>
         <form method="post" action="restart.php">

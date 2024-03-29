@@ -8,6 +8,6 @@ RUN git clone https://github.com/hanze-hbo-ict/itvb23ows-hive-ai.git
 
 WORKDIR /itvb23ows-hive-ai
 
-EXPOSE 7331
+EXPOSE 5000
 
 CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0", "--debug"]

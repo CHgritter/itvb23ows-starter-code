@@ -4,6 +4,7 @@ namespace tests;
 
 use functions\Game;
 use functions\Database;
+use functions\AIHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +19,8 @@ class AITest extends TestCase
         $dbMock->allows('newGame')->andReturns(1);
         $dbMock->allows('placeMove')->andReturns(1);
         $aiMock = Mockery::mock(AIHandler::class);
-        $aiMock->allows('aiCall')->andReturns(["play", "B", "1,0"]);
+        $aiMock->allows('aiCall')
+            ->andReturns(json_encode(["play", "B", "1,0"]));
         $this->game = new Game($dbMock, $aiMock);
         $this->game->restart();
         $_SESSION['board']['0,0'] = [[$_SESSION['player'], "Q"]];
@@ -40,11 +42,8 @@ class AITest extends TestCase
 
     // Test two: make sure AI move gets played, regardless of it being legal or not.
     public function testAIAction() {
-        // arrange
-        $aiMove = $this->game->getAiMove();
-
         // act
-        $aiMove = $this->game->aiAction();
+        $this->game->aiAction();
 
         // assert
         self::assertArrayHasKey('1,0', $this->game->getBoard());

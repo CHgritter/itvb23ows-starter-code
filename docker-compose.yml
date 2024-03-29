@@ -4,6 +4,7 @@ services:
     build: App
     depends_on:
       - database_game
+      - ai
     container_name: php_game_container
     environment:
       MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
@@ -34,7 +35,7 @@ services:
     build: AI
     container_name: ai_game_container
     ports:
-      - "7331:7331"
+      - "5000:5000"
 
 volumes:
   hive_db:

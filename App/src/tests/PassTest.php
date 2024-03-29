@@ -10,6 +10,19 @@ use PHPUnit\Framework\TestCase;
 class PassTest extends TestCase
 {
     private Game $game;
+    private array $validPassProvider = [
+        ["Q", '0,0'], ["Q", '0,1'],
+        ["B", '0,-1'], ["B", '0,2'],
+        ["B", '0,-2'], ["B", '0,3'],
+        ["S", '0,-3'], ["S", '0,4'],
+        ["S", '0,-4'], ["S", '0,5'],
+        ["G", '0,-5'], ["G", '0,6'],
+        ["G", '0,-6'], ["G", '0,7'],
+        ["G", '0,-7'], ["G", '0,8'],
+        ["A", '0,-8'], ["A", '0,9'],
+        ["A", '0,-9'], ["A", '0,10'],
+        ["A", '0,-10'], ["A", '0,11']
+    ];
 
     protected function setUp(): void
     {
@@ -22,21 +35,13 @@ class PassTest extends TestCase
         $this->game->restart();
     }
 
-    public function validPassProvider(): array
+    public function createBoard(): void
     {
-        return [
-            ["Q", '0,0'], ["Q", '0,1'],
-            ["B", '0,-1'], ["B", '0,2'],
-            ["B", '0,-2'], ["B", '0,3'],
-            ["S", '0,-3'], ["S", '0,4'],
-            ["S", '0,-4'], ["S", '0,5'],
-            ["G", '0,-5'], ["G", '0,6'],
-            ["G", '0,-6'], ["G", '0,7'],
-            ["G", '0,-7'], ["G", '0,8'],
-            ["A", '0,-8'], ["A", '0,9'],
-            ["A", '0,-9'], ["A", '0,10'],
-            ["A", '0,-10'], ["A", '0,11']
-        ];
+        foreach ($this->validPassProvider as $part) {
+            $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
+            $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
+            $_SESSION['player'] = 1 - $_SESSION['player'];
+        }
     }
 
     // Test one: pass must only be able to be used once the player has no stones left in their hand
@@ -46,11 +51,7 @@ class PassTest extends TestCase
     //         All the moves are legal.
     public function testPassSuccess() {
         // act
-        foreach ($this->validPassProvider() as $part) {
-            $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
-            $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
-            $_SESSION['player'] = 1 - $_SESSION['player'];
-        }
+        $this->createBoard();
         $notPassingPlayer = $this->game->getPlayer();
         $this->game->moveStone('0,-10', '0,12');
         $this->game->passTurn();
@@ -62,11 +63,7 @@ class PassTest extends TestCase
     public function testPassAfterSuccess()
     {
         // act
-        foreach ($this->validPassProvider() as $part) {
-            $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
-            $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
-            $_SESSION['player'] = 1 - $_SESSION['player'];
-        }
+        $this->createBoard();
         $this->game->moveStone('0,-10', '0,12');
         $this->game->passTurn();
         $this->game->moveStone('0,-9', '0,13');
@@ -78,11 +75,7 @@ class PassTest extends TestCase
     public function testPassMovesRemaining()
     {
         // act
-        foreach ($this->validPassProvider() as $part) {
-            $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
-            $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
-            $_SESSION['player'] = 1 - $_SESSION['player'];
-        }
+        $this->createBoard();
         $this->game->passTurn();
 
         // assert
@@ -92,7 +85,7 @@ class PassTest extends TestCase
     public function testPassTilesRemaining()
     {
         // act
-        foreach ($this->validPassProvider() as $part) {
+        foreach ($this->validPassProvider as $part) {
             if ($part[1] == '0,11') {
                 break;
             }
