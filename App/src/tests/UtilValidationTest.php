@@ -25,73 +25,91 @@ class UtilValidationTest extends TestCase
     }
 
     public function testUtilValidatePlayPositionIsValid() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
         $hand = $this->game->getHand($player);
 
+        // act
+        $validPosition = $this->util->validatePlayPosition($board, '0,-1', $hand, $player);
+
         // assert
-        self::assertTrue($this->util->validatePlayPosition($board, '0,-1', $hand, $player));
+        self::assertTrue($validPosition);
     }
 
     public function testUtilValidatePlayPositionIsNotEmpty() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
         $hand = $this->game->getHand($player);
 
+        // act
+        $validPosition = $this->util->validatePlayPosition($board, '0,0', $hand, $player);
+
         // assert
-        self::assertFalse($this->util->validatePlayPosition($board, '0,0', $hand, $player));
+        self::assertFalse($validPosition);
     }
 
     public function testUtilValidatePlayPositionNoNeighbour() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
         $hand = $this->game->getHand($player);
 
+        // act
+        $validPosition = $this->util->validatePlayPosition($board, '0,-2', $hand, $player);
+
         // assert
-        self::assertFalse($this->util->validatePlayPosition($board, '0,-2', $hand, $player));
+        self::assertFalse($validPosition);
     }
 
     public function testUtilValidatePlayPositionHasOpposingNeighbour() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
         $hand = $this->game->getHand($player);
 
+        // act
+        $validPosition = $this->util->validatePlayPosition($board, '-1,1', $hand, $player);
+
         // assert
-        self::assertFalse($this->util->validatePlayPosition($board, '-1,1', $hand, $player));
+        self::assertFalse($validPosition);
     }
 
     public function testUtilplayerDoesOwnTile() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
 
+        // act
+        $ownsTile = $this->util->playerOwnsTile($board, '0,0', $player);
+
         // assert
-        self::assertTrue($this->util->playerOwnsTile($board, '0,0', $player));
+        self::assertTrue($ownsTile);
     }
 
     public function testUtilplayerDoesNotOwnTile() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $board = $this->game->getBoard();
         $player = $this->game->getPlayer();
 
+        // act
+        $ownsTile = $this->util->playerOwnsTile($board, '0,1', $player);
+
         // assert
-        self::assertFalse($this->util->playerOwnsTile($board, '0,1', $player));
+        self::assertFalse($ownsTile);
     }
 
 }

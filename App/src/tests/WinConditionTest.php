@@ -22,13 +22,13 @@ class WinConditionTest extends TestCase
     }
 
     public function gameFinishedSetup() {
+        // arrange
         $finishedInit = [
             ["Q", '0,0'], ["Q", '0,1'],
             ["B", '-1,0'], ["B", '-1,2'],
             ["B", '1,-1'], ["B", '1,1'],
             ["A", '0,-1'], ["A", '0,2']
         ];
-
         foreach ($finishedInit as $part) {
             $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
             $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
@@ -38,15 +38,16 @@ class WinConditionTest extends TestCase
 
     // Test one: game must end if either one of the queens is surrounded.
     // Black Queen surrounded.
-    public function testWhiteWins()
-    {
-        // act
+    public function testWhiteWins() {
+        // arrange
         $this->gameFinishedSetup();
         $this->game->placeStone("A", '0,-2');
         $this->game->placeStone("A", '0,3');
         $this->game->moveStone('0,-2', '-1,1');
         $this->game->placeStone("A", '0,4');
         $this->game->moveStone('0,-1', '1,0');
+
+        // act
         $this->game->isGameFinished();
 
         // assert
@@ -54,9 +55,8 @@ class WinConditionTest extends TestCase
     }
 
     // White Queen surrounded.
-    public function testblackWins()
-    {
-        // act
+    public function testblackWins() {
+        // arrange
         $this->gameFinishedSetup();
         $this->game->placeStone("A", '0,-2');
         $this->game->placeStone("A", '0,3');
@@ -64,6 +64,8 @@ class WinConditionTest extends TestCase
         $this->game->moveStone('0,3', '-1,1');
         $this->game->placeStone("G", '0,-4');
         $this->game->moveStone('0,2', '1,0');
+
+        // act
         $this->game->isGameFinished();
 
         // assert
@@ -72,10 +74,11 @@ class WinConditionTest extends TestCase
 
 
     // Game not over yet.
-    public function testGameNotOver()
-    {
-        // act
+    public function testGameNotOver() {
+        // arrange
         $this->gameFinishedSetup();
+
+        // act
         $this->game->isGameFinished();
 
         // assert
@@ -84,14 +87,15 @@ class WinConditionTest extends TestCase
 
 
     // Test two: game must end in a draw if both queens are surrounded.
-    public function testGameTied()
-    {
-        // act
+    public function testGameTied() {
+        // arrange
         $this->gameFinishedSetup();
         $this->game->placeStone("A", '0,-2');
         $this->game->placeStone("A", '0,3');
         $this->game->moveStone('0,-2', '-1,1');
         $this->game->moveStone('0,3', '1,0');
+
+        // act
         $this->game->isGameFinished();
 
         // assert

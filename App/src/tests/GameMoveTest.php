@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class GameMoveTest extends TestCase
 {
-    private $game;
+    private Game $game;
 
     protected function setUp(): void
     {
@@ -22,11 +22,13 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveOne() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+
+        // act
         $this->game->moveStone('-1,0', '0,-1');
 
         // assert
@@ -34,9 +36,11 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveTwo() { //AKA, the check for issue 2
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("Q", '1,0');
+
+        // act
         $this->game->moveStone('0,0', '0,1');
 
         // assert
@@ -44,13 +48,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveThree() { //AKA, the check for issue 4
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->moveStone('-1,0', '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->placeStone("B", '-1,0');
 
         // assert
@@ -58,11 +64,13 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveNextToEnemy() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+
+        // act
         $this->game->moveStone('-1,0', '-1,1');
 
         // assert
@@ -70,13 +78,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveTooFarWithBeetle() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '1,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '1,-2');
 
         // assert
@@ -84,13 +94,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveBeetleOverAnotherBeetle() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '1,-2');
 
         // assert
@@ -98,11 +110,13 @@ class GameMoveTest extends TestCase
     }
 
     public function testMovePositionEmpty() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+
+        // act
         $this->game->moveStone('1,-1', '1,-2');
 
         // assert
@@ -110,11 +124,13 @@ class GameMoveTest extends TestCase
         }
 
     public function testMoveNotMoved() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+
+        // act
         $this->game->moveStone('-1,0', '-1,0');
 
         // assert
@@ -122,11 +138,13 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveNotOwned() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
+
+        // act
         $this->game->moveStone('-1,2', '0,2');
 
         // assert
@@ -134,13 +152,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveMustPlayQueen() {
-        // act
+        // arrange
         $this->game->placeStone("A", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("A", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '1,1');
+
+        // act
         $this->game->moveStone('-1,0', '-1,-1');
 
         // assert
@@ -148,13 +168,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveSplitHive() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '1,1');
+
+        // act
         $this->game->moveStone('-1,0', '-2,0');
 
         // assert
@@ -162,13 +184,15 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveNotEmpty() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->moveStone('-1,2', '-1,1');
+
+        // act
         $this->game->moveStone('0,0', '-1,0');
 
         // assert
@@ -176,7 +200,7 @@ class GameMoveTest extends TestCase
     }
 
     public function testMoveMustSlide() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
@@ -189,6 +213,8 @@ class GameMoveTest extends TestCase
         $this->game->placeStone("A", '-2,3');
         $this->game->placeStone("A", '1,-1');
         $this->game->placeStone("A", '0,3');
+
+        // act
         $this->game->moveStone('0,-1', '-1,-1');
 
         // assert

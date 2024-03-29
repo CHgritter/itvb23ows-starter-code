@@ -18,8 +18,6 @@ services:
   database_game:
     build: DB
     container_name: mysql_game_container
-    #image: mysql:8.0
-    #restart: always
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}

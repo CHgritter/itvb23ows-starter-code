@@ -22,6 +22,7 @@ class GrasshopperTest extends TestCase
     }
 
     public function prepareOneJump() {
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
@@ -30,10 +31,12 @@ class GrasshopperTest extends TestCase
 
     // Test one: Jumps in straight line over other bugs
     public function testJumpStraightOverOneBugNonePos() {
-        // act
+        // arrange
         $this->prepareOneJump();
         $this->game->placeStone("B", '0,-1');
         $this->game->moveStone('-1,2', '-1,1');
+
+        // act
         $this->game->moveStone('-1,0', '-1,2');
 
         // assert
@@ -41,12 +44,14 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverOneBugNoneNeg() {
-        // act
+        // arrange
         $this->prepareOneJump();
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '-1,-1');
         $this->game->moveStone('-1,2', '-1,1');
+
+        // act
         $this->game->moveStone('-1,0', '-1,-2');
 
         // assert
@@ -54,8 +59,10 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverOneBugPosNone() {
-        // act
+        // arrange
         $this->prepareOneJump();
+
+        // act
         $this->game->moveStone('-1,0', '1,0');
 
         // assert
@@ -63,7 +70,7 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverOneBugNegNone() {
-        // act
+        // arrange
         $this->prepareOneJump();
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
@@ -73,6 +80,8 @@ class GrasshopperTest extends TestCase
         $this->game->moveStone('0,2', '-1,2');
         $this->game->placeStone("A", '-2,0');
         $this->game->moveStone('-1,2', '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '-3,0');
 
         // assert
@@ -80,10 +89,12 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverOneBugNegPos() {
-        // act
+        // arrange
         $this->prepareOneJump();
         $this->game->placeStone("B", '-2,1');
         $this->game->moveStone('-1,2', '-1,1');
+
+        // act
         $this->game->moveStone('-1,0', '-3,2');
 
         // assert
@@ -91,10 +102,12 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverOneBugPosNeg() {
-        // act
+        // arrange
         $this->prepareOneJump();
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '1,-2');
 
         // assert
@@ -102,13 +115,15 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpNotStraightOverOneBug() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '1,-1');
 
         // assert
@@ -116,7 +131,7 @@ class GrasshopperTest extends TestCase
     }
 
     public function testJumpStraightOverTwoBugs() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
@@ -125,6 +140,8 @@ class GrasshopperTest extends TestCase
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '1,-2');
         $this->game->placeStone("G", '0,3');
+
+        // act
         $this->game->moveStone('-1,0', '2,-3');
 
         // assert
@@ -133,13 +150,15 @@ class GrasshopperTest extends TestCase
 
     // Test two: Can't jump to the starting position of that turn
     public function testDontJumpToStartPosition() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '-1,0');
 
         // assert
@@ -148,13 +167,15 @@ class GrasshopperTest extends TestCase
 
     // Test three: Can't jump one tile
     public function testJumpCantBeOneTileLong() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '0,2');
+
+        // act
         $this->game->moveStone('-1,0', '-1,-1');
 
         // assert
@@ -163,7 +184,7 @@ class GrasshopperTest extends TestCase
 
     // Test four: Can't jump onto an occupied tile
     public function testCantJumpToOccupiedTile() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
@@ -172,6 +193,8 @@ class GrasshopperTest extends TestCase
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '1,-2');
         $this->game->placeStone("G", '0,3');
+
+        // act
         $this->game->moveStone('-1,0', '1,-2');
 
         // assert
@@ -180,7 +203,7 @@ class GrasshopperTest extends TestCase
 
     // Test five: Can't jump over empty fields
     public function testCantJumpOverEmptyTile() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
@@ -189,6 +212,8 @@ class GrasshopperTest extends TestCase
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '1,-2');
         $this->game->placeStone("G", '0,3');
+
+        // act
         $this->game->moveStone('-1,0', '2,-3');
 
         // assert
@@ -197,7 +222,7 @@ class GrasshopperTest extends TestCase
 
     // Extra tests
     public function testCantCreateSplitHive() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("G", '-1,0');
@@ -206,6 +231,8 @@ class GrasshopperTest extends TestCase
         $this->game->placeStone("B", '1,1');
         $this->game->placeStone("B", '-1,-1');
         $this->game->moveStone('1,1', '1,0');
+
+        // act
         $this->game->moveStone('-1,0', '2,0');
 
         // assert

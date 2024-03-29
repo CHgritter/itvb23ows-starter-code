@@ -31,8 +31,10 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayBlackBeetle() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
+
+        // act
         $this->game->placeStone("B", '0,1');
 
         // assert
@@ -40,12 +42,14 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayMultiple() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("Q", '-1,2');
         $this->game->placeStone("B", '0,-1');
+
+        // act
         $this->game->placeStone("B", '1,1');
 
         // assert
@@ -53,9 +57,11 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayMissingTile() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
+
+        // act
         $this->game->placeStone("Q", '1,0');
 
         // assert
@@ -63,8 +69,10 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayIsNotEmpty() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
+
+        // act
         $this->game->placeStone("B", '0,0');
 
         // assert
@@ -72,9 +80,11 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayNoNeighbour() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
+
+        // act
         $this->game->placeStone("B", '0,-2');
 
         // assert
@@ -82,9 +92,11 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayOpposingNeighbour() {
-        // act
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
+
+        // act
         $this->game->placeStone("B", '-1,1');
 
         // assert
@@ -92,13 +104,15 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayMustPlayQueen() {
-        // act
+        // arrange
         $this->game->placeStone("A", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("A", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '1,1');
+
+        // act
         $this->game->placeStone("A", '-1,-1');
 
         // assert
@@ -106,13 +120,15 @@ class GamePlayTest extends TestCase
     }
 
     public function testPlayMustPlayQueenAndDoesSo() { //AKA, the check for issue 3
-        // act
+        // arrange
         $this->game->placeStone("A", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("B", '-1,0');
         $this->game->placeStone("A", '-1,2');
         $this->game->placeStone("B", '0,-1');
         $this->game->placeStone("B", '1,1');
+
+        // act
         $this->game->placeStone("Q", '-1,-1');
 
         // assert

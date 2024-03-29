@@ -37,6 +37,7 @@ class PassTest extends TestCase
 
     public function createBoard(): void
     {
+        // arrange
         foreach ($this->validPassProvider as $part) {
             $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
             $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
@@ -50,41 +51,44 @@ class PassTest extends TestCase
     // Notice: The test will use direct session calls for placing stones to make it faster.
     //         All the moves are legal.
     public function testPassSuccess() {
-        // act
+        // arrange
         $this->createBoard();
         $notPassingPlayer = $this->game->getPlayer();
         $this->game->moveStone('0,-10', '0,12');
+
+        // act
         $this->game->passTurn();
 
         // assert
         self::assertSame($notPassingPlayer, $this->game->getPlayer());
     }
 
-    public function testPassAfterSuccess()
-    {
-        // act
+    public function testPassAfterSuccess() {
+        // arrange
         $this->createBoard();
         $this->game->moveStone('0,-10', '0,12');
         $this->game->passTurn();
+
+        // act
         $this->game->moveStone('0,-9', '0,13');
 
         // assert
         self::assertArrayHasKey('0,13', $this->game->getBoard());
     }
 
-    public function testPassMovesRemaining()
-    {
-        // act
+    public function testPassMovesRemaining() {
+        // arrange
         $this->createBoard();
+
+        // act
         $this->game->passTurn();
 
         // assert
         self::assertSame("Valid moves still present", $_SESSION['error']);
     }
 
-    public function testPassTilesRemaining()
-    {
-        // act
+    public function testPassTilesRemaining() {
+        // arrange
         foreach ($this->validPassProvider as $part) {
             if ($part[1] == '0,11') {
                 break;
@@ -93,6 +97,8 @@ class PassTest extends TestCase
             $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
             $_SESSION['player'] = 1 - $_SESSION['player'];
         }
+
+        // act
         $this->game->passTurn();
 
         // assert

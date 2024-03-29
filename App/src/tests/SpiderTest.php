@@ -22,6 +22,7 @@ class SpiderTest extends TestCase
     }
 
     public function prepareTest() {
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("S", '-1,0');
@@ -31,8 +32,10 @@ class SpiderTest extends TestCase
     // Test one: a spider moves exactly three tiles.
     // a correct move.
     public function testSpiderThreeTiles() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '1,0');
 
         // assert
@@ -41,8 +44,10 @@ class SpiderTest extends TestCase
 
     // only two tiles.
     public function testSpiderTwoTiles() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '1,-1');
 
         // assert
@@ -51,8 +56,10 @@ class SpiderTest extends TestCase
 
     // only one tile.
     public function testSpiderOneTile() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '0,-1');
 
         // assert
@@ -61,8 +68,10 @@ class SpiderTest extends TestCase
 
     // too many tiles.
     public function testSpiderMoreThanThreeTiles() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '1,1');
 
         // assert
@@ -72,7 +81,7 @@ class SpiderTest extends TestCase
     // Test two: a spider slides just like a Beetle and Queen Bee
     // cannot leave spot
     public function testSpiderCannotSlideOut() {
-        // act
+        // arrange
         $this->prepareTest();
         $this->game->placeStone("B", '-2,1');
         $this->game->placeStone("B", '0,2');
@@ -82,6 +91,8 @@ class SpiderTest extends TestCase
         $this->game->placeStone("A", '-1,3');
         $this->game->placeStone("G", '0,-1');
         $this->game->placeStone("G", '0,3');
+
+        // act
         $this->game->moveStone('-1,0', '1,-1');
 
         // assert
@@ -90,7 +101,7 @@ class SpiderTest extends TestCase
 
     // cannot reach destination
     public function testSpiderCannotSlideIn() {
-        // act
+        // arrange
         $this->prepareTest();
         $this->game->placeStone("B", '-2,0');
         $this->game->placeStone("B", '-2,2');
@@ -100,6 +111,8 @@ class SpiderTest extends TestCase
         $this->game->placeStone("A", '2,0');
         $this->game->placeStone("A", '-2,-1');
         $this->game->placeStone("S", '2,-1');
+
+        // act
         $this->game->moveStone('-1,0', '1,0');
 
         // assert
@@ -108,8 +121,10 @@ class SpiderTest extends TestCase
 
     // Test three: a spider can't move to it's from position
     public function testSpiderCannotMoveToStart() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '-1,0');
 
         // assert
@@ -118,8 +133,10 @@ class SpiderTest extends TestCase
 
     // Test four: a spider cannot move onto or through occupied tiles.
     public function testSpiderCannotMoveToOccupiedTile() {
-        // act
+        // arrange
         $this->prepareTest();
+
+        // act
         $this->game->moveStone('-1,0', '-1,2');
 
         // assert
@@ -129,5 +146,6 @@ class SpiderTest extends TestCase
     // Test five: a spider cannot move over the same tile twice in one turn.
     //
     // this one is already handled thanks to testSpiderOneTile,
-    // since if it could go over the same in one turn, this test would fail.
+    // since if it could go over the same tile twice, it would actually register the move,
+    // failing the test.
 }

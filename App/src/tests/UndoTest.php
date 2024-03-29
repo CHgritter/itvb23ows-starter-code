@@ -29,6 +29,7 @@ class UndoTest extends TestCase
 
     public function createBoard($tiles, $lastMove): void
     {
+        // arrange
         foreach ($tiles as $part) {
             $_SESSION['board'][$part[1]] = [[$_SESSION['player'], $part[0]]];
             $_SESSION['hand'][$this->game->getPlayer()][$part[0]]--;
@@ -62,9 +63,9 @@ class UndoTest extends TestCase
         $this->dbMock->allows('undoTurn')
             ->with(2)
             ->andReturns([5 => 2, 6 => $gameState]);
+        $this->game->placeStone("B", '-1,0');
 
         // act
-        $this->game->placeStone("B", '-1,0');
         $this->game->undo();
 
         // assert
@@ -86,9 +87,9 @@ class UndoTest extends TestCase
         $this->dbMock->allows('undoTurn')
             ->with(4)
             ->andReturns([5 => 4, 6 => $gameState]);
+        $this->game->moveStone('-1,0', '0,-1');
 
         // act
-        $this->game->moveStone('-1,0', '0,-1');
         $this->game->undo();
 
         // assert

@@ -19,9 +19,11 @@ class AntTest extends TestCase
         $dbMock->allows('placeMove')->andReturns(1);
         $this->game = new Game($dbMock);
         $this->game->restart();
+        $this->prepareFirstTest();
     }
 
     public function prepareFirstTest() {
+        // arrange
         $this->game->placeStone("Q", '0,0');
         $this->game->placeStone("B", '0,1');
         $this->game->placeStone("A", '-1,0');
@@ -32,7 +34,6 @@ class AntTest extends TestCase
 // small distance
     public function testAntMovement1() {
         // act
-        $this->prepareFirstTest();
         $this->game->moveStone('-1,0', '1,-1');
 
         // assert
@@ -41,10 +42,11 @@ class AntTest extends TestCase
 
 // big distance
     public function testAntMovement2() {
-        // act
-        $this->prepareFirstTest();
+        // arrange
         $this->game->placeStone("B", '1,-1');
         $this->game->placeStone("B", '1,1');
+
+        // act
         $this->game->moveStone('-1,0', '2,-1');
 
         // assert
@@ -54,7 +56,6 @@ class AntTest extends TestCase
 // Next to enemy
     public function testAntMovement3() {
         // act
-        $this->prepareFirstTest();
         $this->game->moveStone('-1,0', '-2,2');
 
         // assert
@@ -64,8 +65,7 @@ class AntTest extends TestCase
 // Test Two: Adheres to the slide of the Queen Bee and Beetles
 // stuck at origin
     public function testAntCannotSlideOut() {
-        // act
-        $this->prepareFirstTest();
+        // arrange
         $this->game->placeStone("B", '-2,1');
         $this->game->placeStone("B", '0,2');
         $this->game->placeStone("B", '-1,-1');
@@ -74,6 +74,8 @@ class AntTest extends TestCase
         $this->game->placeStone("A", '-1,3');
         $this->game->placeStone("G", '0,-1');
         $this->game->placeStone("G", '0,3');
+
+        // act
         $this->game->moveStone('-1,0', '1,-1');
 
         // assert
@@ -82,12 +84,13 @@ class AntTest extends TestCase
 
 // impossible to reach destination
     public function testAntCannotSlideIn() {
-        // act
-        $this->prepareFirstTest();
+        // arrange
         $this->game->placeStone("B", '1,-1');
         $this->game->placeStone("B", '1,1');
         $this->game->placeStone("B", '2,-1');
         $this->game->placeStone("A", '-2,3');
+
+        // act
         $this->game->moveStone('-1,0', '1,0');
 
         // assert
@@ -97,7 +100,6 @@ class AntTest extends TestCase
 // Test Three: Can't move to where it starts
     public function testAntCannotGoToOrigin() {
         // act
-        $this->prepareFirstTest();
         $this->game->moveStone('-1,0', '-1,0');
 
         // assert
@@ -107,7 +109,6 @@ class AntTest extends TestCase
 // Test Four: Can only reach and traverse through empty tiles
     public function testAntDestinationBlocked() {
         // act
-        $this->prepareFirstTest();
         $this->game->moveStone('-1,0', '-1,2');
 
         // assert

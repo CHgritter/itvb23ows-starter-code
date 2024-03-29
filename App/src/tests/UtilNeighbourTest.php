@@ -12,6 +12,7 @@ class UtilNeighbourTest extends TestCase
 
     protected function setUp(): void
     {
+        // arrange
         $this->util = new Util();
     }
 
@@ -29,7 +30,11 @@ class UtilNeighbourTest extends TestCase
 
     #[DataProvider('isNeighboursProvider')]
     public function testIsNeighbour($a, $b) {
-        self::assertTrue($this->util->isNeighbour($a, $b));
+        // act
+        $isNeighbour = $this->util->isNeighbour($a, $b);
+
+        // assert
+        self::assertTrue($isNeighbour);
     }
 
     public static function notNeighboursProvider(): array
@@ -44,7 +49,11 @@ class UtilNeighbourTest extends TestCase
 
     #[DataProvider('notNeighboursProvider')]
     public function testIsNotNeighbour($a, $b) {
-        self::assertFalse($this->util->isNeighbour($a, $b));
+        // act
+        $isNeighbour = $this->util->isNeighbour($a, $b);
+
+        // assert
+        self::assertFalse($isNeighbour);
     }
 
 }

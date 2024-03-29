@@ -143,7 +143,7 @@ class MoveValidator
     // once one of the requirements isn't met to allow the jump to happen.
     public function grasshopperJump($from, $to, $board): bool
     {
-        if (!$this->util->isNeighbour($from, $to)) {
+        if ($this->util->isNeighbour($from, $to)) {
             return false;
         }
         $fromCoords = explode(',', $from);
